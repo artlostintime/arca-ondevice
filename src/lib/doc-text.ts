@@ -6,16 +6,13 @@
 /** Decode a text/CSV file, honoring BOMs. */
 export function decodeText(bytes: Uint8Array): string {
   if (bytes.length >= 2 && bytes[0] === 0xff && bytes[1] === 0xfe) {
-    return new TextDecoder('utf-16le').decode(bytes.slice(2));
+    return new TextDecoder('utf-16le').decode(bytes);
   }
   if (bytes.length >= 2 && bytes[0] === 0xfe && bytes[1] === 0xff) {
-    return new TextDecoder('utf-16be').decode(bytes.slice(2));
+    return new TextDecoder('utf-16be').decode(bytes);
   }
-  let start = 0;
-  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
-    start = 3;
-  }
-  return new TextDecoder('utf-8').decode(bytes.slice(start));
+  const start = bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf ? 3 : 0;
+  return new TextDecoder('utf-8').decode(start ? bytes.subarray(start) : bytes);
 }
 
 const PAGE_MARKER = /<!--\s*Page\s+(\d+)\s*-->/g;

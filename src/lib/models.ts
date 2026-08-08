@@ -8,21 +8,19 @@ export const ORT_CDN = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.27.0/dist
 
 const HF = 'https://huggingface.co/monkt/paddleocr-onnx/resolve/main';
 
-export interface OcrRecModel {
-  name: string;
-  url: string;
-  dictUrl: string;
-  /** Nominal on-disk size of the model file, in bytes (for preflight display). */
-  sizeBytes: number;
-}
-
 export const OCR_DET = {
   name: 'PP-OCRv3 mobile detection',
   url: `${HF}/detection/v3/det.onnx`,
   sizeBytes: 2_429_873,
 };
 
-export const OCR_REC: Record<'en' | 'hi' | 'ur', OcrRecModel> = {
+export const OCR_REC: Record<'en' | 'hi' | 'ur', {
+  name: string;
+  url: string;
+  dictUrl: string;
+  /** Nominal on-disk size of the model file, in bytes (for preflight display). */
+  sizeBytes: number;
+}> = {
   en: {
     name: 'PP-OCRv5 English recognition',
     url: `${HF}/languages/english/rec.onnx`,
@@ -43,11 +41,6 @@ export const OCR_REC: Record<'en' | 'hi' | 'ur', OcrRecModel> = {
   },
 };
 
-export interface AsrModelId {
-  tiny: string;
-  base: string;
-}
-
 export type AsrModelKey = 'whisper-tiny' | 'whisper-base' | 'moonshine-tiny' | 'moonshine-base';
 
 /**
@@ -62,7 +55,7 @@ export function parseAsrModel(key: AsrModelKey): { family: 'moonshine' | 'whispe
   };
 }
 
-export const ASR_MODELS: Record<'moonshine' | 'whisper', AsrModelId> = {
+export const ASR_MODELS: Record<'moonshine' | 'whisper', { tiny: string; base: string }> = {
   moonshine: {
     tiny: 'onnx-community/moonshine-tiny-ONNX',
     base: 'onnx-community/moonshine-base-ONNX',
@@ -86,14 +79,6 @@ export const ASR_SIZES: Record<string, number> = {
 
 const MODEL_CACHE = 'converter-models-v1';
 
-export class ModelDownloadError extends Error {
-  code = 'MODEL_DOWNLOAD';
-  constructor(message: string) {
-    super(message);
-    this.name = 'ModelDownloadError';
-  }
-}
-
 export interface ModelProgress {
   loaded: number;
   total: number;
@@ -103,10 +88,14 @@ export interface ModelProgress {
 async function fetchWithProgress(
   url: string,
   onProgress?: (p: ModelProgress) => void,
-): Promise<Response> {
+): Promise<Uint8Array> {
   const resp = await fetch(url, { mode: 'cors' });
-  if (!resp.ok) throw new ModelDownloadError(`HTTP ${resp.status} downloading ${url}`);
-  if (!resp.body) return resp;
+  if (!resp.ok) {
+    const e = new Error(`HTTP ${resp.status} downloading ${url}`);
+    (e as Error & { code: string }).code = 'MODEL_DOWNLOAD';
+    throw e;
+  }
+  if (!resp.body) return new Uint8Array(await resp.arrayBuffer());
   const total = Number(resp.headers.get('content-length')) || 0;
   const reader = resp.body.getReader();
   const chunks: Uint8Array[] = [];
@@ -118,7 +107,11 @@ async function fetchWithProgress(
     loaded += value.length;
     onProgress?.({ loaded, total, url });
   }
-  return new Response(new Blob(chunks as unknown as BlobPart[]), { status: 200, headers: { 'content-type': resp.headers.get('content-type') ?? 'application/octet-stream' } });
+  const len = chunks.reduce((n, c) => n + c.length, 0);
+  const out = new Uint8Array(len);
+  let off = 0;
+  for (const c of chunks) { out.set(c, off); off += c.length; }
+  return out;
 }
 
 /**
@@ -134,18 +127,16 @@ export async function fetchCachedModel(
     const cache = await caches.open(MODEL_CACHE);
     const hit = await cache.match(url);
     if (hit) return new Uint8Array(await hit.arrayBuffer());
-    const resp = await fetchWithProgress(url, onProgress);
-    const buf = await resp.arrayBuffer();
+    const bytes = await fetchWithProgress(url, onProgress);
     try {
-      await cache.put(url, new Response(buf.slice(0)));
+      await cache.put(url, new Response(bytes.slice().buffer as ArrayBuffer));
     } catch {
       // cache write failed — proceed with in-memory bytes
     }
-    return new Uint8Array(buf);
+    return bytes;
   } catch (e) {
-    if (e instanceof ModelDownloadError) throw e;
+    if ((e as Error & { code?: string })?.code === 'MODEL_DOWNLOAD') throw e;
     // Cache API open/match failed (private mode) → plain fetch.
-    const resp = await fetchWithProgress(url, onProgress);
-    return new Uint8Array(await resp.arrayBuffer());
+    return fetchWithProgress(url, onProgress);
   }
 }
