@@ -1,0 +1,199 @@
+{
+  "name": "projects/7301534801671628588",
+  "title": "On-Device Markdown Converter",
+  "visibility": "PRIVATE",
+  "createTime": "2026-08-08T14:02:38.570387Z",
+  "updateTime": "2026-08-08T14:10:16.977221Z",
+  "projectType": "TEXT_TO_UI_PRO",
+  "thumbnailScreenshot": {
+    "name": "projects/7301534801671628588/screens/25d5060cdfbf4a4da5055408ef328186/fileEntries/screenshot",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLtNb-l11gQbZLCVRIni5v3Pd2CE7HjMOsptk9cw7CS0D4rGXBUojoKJVrnEeZhXXRvZDXpLfX0oMB5dOYcw9qSJH6R9aF-UY_hPXf6nUOnhdeJVJ9bcZz5BEItWNYNiJq72KFk7PwigYE_nWcIv74cE-3qTW1ehBBLqD2YjEAKK0v9SupkodKs8poGS5gNhLI5yuFZGz_8Q7emwCA2cE-ZnplCO0JBZu9712SiolHKPqinNc6vqZXpdCa4"
+  },
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "designTheme": {
+    "colorMode": "DARK",
+    "font": "GEIST",
+    "roundness": "ROUND_EIGHT",
+    "customColor": "#38bdf8",
+    "headlineFont": "GEIST",
+    "bodyFont": "GEIST",
+    "labelFont": "JETBRAINS_MONO",
+    "namedColors": {
+      "on_tertiary_container": "#374559",
+      "outline": "#87929a",
+      "secondary": "#bcc7de",
+      "on_secondary_container": "#aeb9d0",
+      "surface_variant": "#2d3449",
+      "on_secondary_fixed": "#111c2d",
+      "error": "#ffb4ab",
+      "outline_variant": "#3e484f",
+      "primary_fixed": "#c4e7ff",
+      "surface": "#0b1326",
+      "inverse_on_surface": "#283044",
+      "surface_container_highest": "#2d3449",
+      "surface_container_lowest": "#060e20",
+      "on_secondary": "#263143",
+      "surface_container_low": "#131b2e",
+      "tertiary_fixed_dim": "#b9c7e0",
+      "on_primary_container": "#004965",
+      "background": "#0b1326",
+      "on_primary_fixed": "#001e2c",
+      "on_surface_variant": "#bdc8d1",
+      "surface_tint": "#7bd0ff",
+      "on_error": "#690005",
+      "surface_bright": "#31394d",
+      "inverse_primary": "#00668a",
+      "tertiary": "#bfcee6",
+      "inverse_surface": "#dae2fd",
+      "on_tertiary_fixed_variant": "#3a485c",
+      "surface_container": "#171f33",
+      "on_secondary_fixed_variant": "#3c475a",
+      "surface_dim": "#0b1326",
+      "secondary_fixed_dim": "#bcc7de",
+      "surface_container_high": "#222a3d",
+      "on_surface": "#dae2fd",
+      "primary_fixed_dim": "#7bd0ff",
+      "secondary_fixed": "#d8e3fb",
+      "error_container": "#93000a",
+      "on_primary_fixed_variant": "#004c69",
+      "primary": "#8ed5ff",
+      "tertiary_container": "#a4b2ca",
+      "on_tertiary": "#233144",
+      "on_primary": "#00354a",
+      "on_tertiary_fixed": "#0d1c2f",
+      "primary_container": "#38bdf8",
+      "secondary_container": "#3e495d",
+      "on_error_container": "#ffdad6",
+      "tertiary_fixed": "#d5e3fd",
+      "on_background": "#dae2fd"
+    },
+    "designMd": "---\nname: Forensic Precision\ncolors:\n  surface: '#0b1326'\n  surface-dim: '#0b1326'\n  surface-bright: '#31394d'\n  surface-container-lowest: '#060e20'\n  surface-container-low: '#131b2e'\n  surface-container: '#171f33'\n  surface-container-high: '#222a3d'\n  surface-container-highest: '#2d3449'\n  on-surface: '#dae2fd'\n  on-surface-variant: '#bdc8d1'\n  inverse-surface: '#dae2fd'\n  inverse-on-surface: '#283044'\n  outline: '#87929a'\n  outline-variant: '#3e484f'\n  surface-tint: '#7bd0ff'\n  primary: '#8ed5ff'\n  on-primary: '#00354a'\n  primary-container: '#38bdf8'\n  on-primary-container: '#004965'\n  inverse-primary: '#00668a'\n  secondary: '#bcc7de'\n  on-secondary: '#263143'\n  secondary-container: '#3e495d'\n  on-secondary-container: '#aeb9d0'\n  tertiary: '#bfcee6'\n  on-tertiary: '#233144'\n  tertiary-container: '#a4b2ca'\n  on-tertiary-container: '#374559'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#c4e7ff'\n  primary-fixed-dim: '#7bd0ff'\n  on-primary-fixed: '#001e2c'\n  on-primary-fixed-variant: '#004c69'\n  secondary-fixed: '#d8e3fb'\n  secondary-fixed-dim: '#bcc7de'\n  on-secondary-fixed: '#111c2d'\n  on-secondary-fixed-variant: '#3c475a'\n  tertiary-fixed: '#d5e3fd'\n  tertiary-fixed-dim: '#b9c7e0'\n  on-tertiary-fixed: '#0d1c2f'\n  on-tertiary-fixed-variant: '#3a485c'\n  background: '#0b1326'\n  on-background: '#dae2fd'\n  surface-variant: '#2d3449'\ntypography:\n  headline-lg:\n    fontFamily: Geist\n    fontSize: 30px\n    fontWeight: '600'\n    lineHeight: 38px\n    letterSpacing: -0.02em\n  headline-md:\n    fontFamily: Geist\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.01em\n  body-base:\n    fontFamily: Geist\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 24px\n  body-sm:\n    fontFamily: Geist\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 20px\n  mono-label:\n    fontFamily: JetBrains Mono\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 20px\n    letterSpacing: 0.02em\n  mono-data:\n    fontFamily: JetBrains Mono\n    fontSize: 13px\n    fontWeight: '400'\n    lineHeight: 18px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  max-content-width: 860px\n  gutter: 1.5rem\n  section-gap: 2rem\n  stack-gap: 0.75rem\n  container-padding: 1.5rem\n---\n\n## Brand & Style\nThe design system is rooted in a **Developer-Tool / High-Utility** aesthetic. It prioritizes data integrity, privacy, and technical clarity. The personality is \"Forensics-Clean\"—meaning every pixel serves a functional purpose, noise is eliminated, and the interface feels like a secure terminal for sensitive data operations.\n\nThe style is a blend of **Modern Minimalism** and **Technical Utility**. It utilizes a deep, monochromatic foundation with vibrant functional accents to guide the eye toward status and action. The emotional response is one of absolute control, calm efficiency, and professional trust.\n\n## Colors\nThe palette is built on a dark-only foundation to reduce eye strain during technical workflows.\n- **Primary**: Used exclusively for high-priority actions, progress indicators, and active states.\n- **Surface Strategy**: Layers are defined by increasing luminosity. The base background is the darkest, while interactive elements and cards sit on lighter \"Soft\" or \"Card\" backgrounds to create logical grouping.\n- **Borders**: All structural containers use a consistent border color to define boundaries without heavy shadows.\n- **Semantics**: Success, Warning, and Danger colors are used sparingly for status indicators and phase labels to maintain the professional, calm atmosphere.\n\n## Typography\nThis design system employs a dual-font strategy to distinguish between UI orchestration and technical data.\n- **UI Text (Geist)**: Used for all navigational elements, titles, and descriptions. It provides a clean, modern, and readable foundation.\n- **Technical Text (JetBrains Mono)**: Used for file names, sizes, hash values, and progress percentages. This distinguishes \"content to be processed\" from \"application controls.\"\n- **Bilingual Support**: For Urdu (RTL) and Hindi (LTR) compatibility, line-heights are kept generous to prevent tall characters from clipping.\n\n## Layout & Spacing\nThe layout follows a **Fixed Centered Column** model. Content is constrained to a maximum width of 860px to focus the user's attention on the conversion pipeline.\n\n- **Grid**: A simplified 12-column system is used within the 860px container, though most elements span the full width or 1/2 width in a card format.\n- **Mobile Adaptation**: On devices smaller than 860px, margins compress to 16px and the layout becomes a single fluid column.\n- **RTL Support**: All horizontal spacing (margins, padding) must be defined using logical properties (padding-inline-start/end) to ensure seamless switching between English and Urdu.\n\n## Elevation & Depth\nDepth is communicated through **Tonal Layering** rather than traditional shadows.\n- **Level 0 (Base)**: `#0f172a` (The canvas).\n- **Level 1 (Cards/Containers)**: `#16213b` with a 1px solid border of `#334155`.\n- **Level 2 (Interactive/Hover)**: Transitions to `#1e293b`.\n\nThis \"flat-depth\" approach reinforces the forensics/professional tool feel. If a shadow is required for a floating modal, it must be a sharp, low-opacity technical shadow: `0 4px 12px rgba(0, 0, 0, 0.5)`.\n\n## Shapes\nThe shape language is disciplined and consistent.\n- **Standard Radius**: 10px is the universal radius for all cards, input fields, and primary buttons.\n- **Small Elements**: Chips and status tags use a 4px radius to feel distinct from larger structural containers.\n- **Progress Bars**: These should have fully rounded (pill-shaped) ends to signify movement and fluid transition.\n\n## Components\n- **Cards**: The primary layout unit. Every card uses the `#16213b` background and 10px radius. Header areas within cards should be separated by a subtle 1px divider.\n- **Progress Bars**: Background of `#1e293b` with a `#38bdf8` fill. Phase labels (e.g., \"Encrypting\", \"Converting\") should be placed above the bar in `mono-label` typography.\n- **Buttons**:\n    - *Primary*: Solid `#38bdf8` with dark text. \n    - *Secondary*: Border-only `#334155` with `#e2e8f0` text.\n- **Status Indicators**: Small dot icons paired with `mono-label` text. Use semantic colors for \"Success\", \"Failed\", or \"Pending\".\n- **Input Fields**: Darker than the card background to create an \"inset\" feel. Borders should highlight in Primary color only when focused.\n- **File List Items**: Use a mono-spaced font for names. Include a clear \"Privacy Shield\" icon to signify the on-device nature of the operation.",
+    "colorVariant": "FIDELITY",
+    "overridePrimaryColor": "#38bdf8",
+    "overrideSecondaryColor": "#1e293b",
+    "overrideTertiaryColor": "#334155",
+    "overrideNeutralColor": "#0f172a",
+    "spacingScale": 2,
+    "typography": {
+      "body-sm": {
+        "fontFamily": "Geist",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "20px"
+      },
+      "mono-label": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "0.02em"
+      },
+      "headline-md": {
+        "fontFamily": "Geist",
+        "fontSize": "24px",
+        "fontWeight": "600",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.01em"
+      },
+      "mono-data": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": "13px",
+        "fontWeight": "400",
+        "lineHeight": "18px"
+      },
+      "headline-lg": {
+        "fontFamily": "Geist",
+        "fontSize": "30px",
+        "fontWeight": "600",
+        "lineHeight": "38px",
+        "letterSpacing": "-0.02em"
+      },
+      "body-base": {
+        "fontFamily": "Geist",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px"
+      }
+    },
+    "spacing": {
+      "gutter": "1.5rem",
+      "max-content-width": "860px",
+      "container-padding": "1.5rem",
+      "stack-gap": "0.75rem",
+      "section-gap": "2rem"
+    },
+    "headlineFontFamily": "Geist",
+    "bodyFontFamily": "Geist",
+    "labelFontFamily": "Jetbrains Mono"
+  },
+  "screenInstances": [
+    {
+      "id": "25d5060cdfbf4a4da5055408ef328186",
+      "sourceScreen": "projects/7301534801671628588/screens/4fa6ce4d40ad4a578f5c3d7de53f8429",
+      "x": 1050,
+      "y": -441,
+      "width": 1280,
+      "height": 1791
+    },
+    {
+      "id": "7c7c4fa6b7084ac0a186347ab72f7f68",
+      "sourceScreen": "projects/7301534801671628588/screens/7c7c4fa6b7084ac0a186347ab72f7f68",
+      "x": 801,
+      "y": 5200,
+      "width": 1280,
+      "height": 1753
+    },
+    {
+      "id": "a2edb0c1d1394291b23fc1c8ec203240",
+      "sourceScreen": "projects/7301534801671628588/screens/a2edb0c1d1394291b23fc1c8ec203240",
+      "x": 3169,
+      "y": 5200,
+      "width": 1280,
+      "height": 1600
+    },
+    {
+      "id": "assets-5572909242435234741-1786197847934",
+      "x": 2384,
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/5572909242435234741",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "assets_08e2b1664c7948b8a3492ad66f6b45b6",
+      "y": 1605,
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/08e2b1664c7948b8a3492ad66f6b45b6",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "assets_5011ad5ec54b47d99766c231c1998073",
+      "x": 2145,
+      "y": 5200,
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/5011ad5ec54b47d99766c231c1998073",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "assets_a1d2e3fcd5884b9ba6970265018f807e",
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/a1d2e3fcd5884b9ba6970265018f807e",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "e9fade32e86740deb0da9f02eabb797d",
+      "sourceScreen": "projects/7301534801671628588/screens/e9fade32e86740deb0da9f02eabb797d",
+      "x": 4677,
+      "y": 5200,
+      "width": 1280,
+      "height": 1790
+    }
+  ],
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}

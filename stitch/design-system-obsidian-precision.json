@@ -1,0 +1,121 @@
+﻿{
+    "displayName":  "Obsidian Precision",
+    "styleGuidelines":  "## Brand \u0026 Style\n\nThis design system is built on the principles of **Forensic Minimalism** and **Technical Brutalism**. The personality is clinical, authoritative, and unapologetically precise. It is designed for high-stakes environments where clarity is paramount and distractions are eliminated. \n\nThe aesthetic focuses on extreme contrast and structural integrity. By removing all color and slate undertones, the UI recedes to allow data and content to become the primary focus. The emotional response is one of absolute focus, reliability, and high-performance engineering. Every line has a purpose; every gap is intentional.\n\n## Layout \u0026 Spacing\n\nThe layout is governed by a **Strict Grid System** based on a 4px baseline. \n\n- **Grid Model**: A 12-column fixed grid for desktop (1440px max-width). Elements must snap to the grid lines.\n- **Borders as Spacers**: Use 1px white or dark gray borders to define zones rather than relying solely on whitespace. This creates a \"blueprint\" feel.\n- **Rhythm**: Use consistent increments (8px, 16px, 24px, 48px). Avoid odd-numbered spacing to maintain the mathematical precision of the interface.\n- **Mobile**: Shift to a 4-column fluid layout with 16px margins. Headlines scale down to 32px to maintain legibility.\n\n## Elevation \u0026 Depth\n\nDepth is achieved through **Tonal Layering** and **Crisp Outlines**, never shadows. \n\n- **Level 0**: `#000000` (Main background).\n- **Level 1**: `#0A0A0A` with a 1px `#262626` border (Cards, Sidebar).\n- **Level 2**: `#141414` with a 1px `#333333` border (Modals, Popovers).\n- **Inversion**: To indicate the highest priority or active state, use a `#FFFFFF` surface with `#000000` content.\n- **Separators**: Use 1px solid lines (`#262626`) for internal dividers. For high-contrast separation, use `#FFFFFF`.\n\n## Components\n\n- **Buttons**:\n  - *Primary*: Solid `#FFFFFF` background, `#000000` text, bold weight.\n  - *Secondary*: Transparent background, 1px `#FFFFFF` border, white text.\n  - *Ghost*: Transparent background, no border, white text with underline on hover.\n- **Input Fields**: 1px `#333333` border on `#000000` background. On focus, the border becomes `#FFFFFF`. Use monospaced font for input text.\n- **Data Tables**: Use 1px horizontal dividers only. Header cells should use the \"label-caps\" typography style with a slight `#1A1A1A` background fill.\n- **Chips/Tags**: Small 1px boxes with monospaced text. For \"Active\" states, invert the colors.\n- **Checkboxes/Radios**: Square geometry (0px radius). Checked state is a solid white fill or a high-contrast \"X\" mark.\n- **Scrollbars**: Minimalist 4px wide bars, color `#333333`, no track background.",
+    "theme":  {
+                  "colorMode":  "DARK",
+                  "font":  "GEIST",
+                  "customColor":  "#ffffff",
+                  "headlineFont":  "GEIST",
+                  "bodyFont":  "JETBRAINS_MONO",
+                  "labelFont":  "JETBRAINS_MONO",
+                  "namedColors":  {
+                                      "error":  "#ffb4ab",
+                                      "surface_bright":  "#393939",
+                                      "on_secondary_fixed":  "#1c1b1b",
+                                      "inverse_on_surface":  "#303030",
+                                      "secondary_fixed_dim":  "#c8c6c5",
+                                      "tertiary_container":  "#e4e2e1",
+                                      "on_tertiary":  "#303030",
+                                      "secondary":  "#c8c6c5",
+                                      "surface_tint":  "#c6c6c7",
+                                      "inverse_surface":  "#e2e2e2",
+                                      "on_primary":  "#2f3131",
+                                      "surface_container_lowest":  "#0e0e0e",
+                                      "tertiary":  "#ffffff",
+                                      "surface_variant":  "#353535",
+                                      "surface_container_high":  "#2a2a2a",
+                                      "on_error_container":  "#ffdad6",
+                                      "primary_fixed":  "#e2e2e2",
+                                      "tertiary_fixed_dim":  "#c8c6c6",
+                                      "surface_container":  "#1f1f1f",
+                                      "primary_container":  "#e2e2e2",
+                                      "error_container":  "#93000a",
+                                      "surface_container_low":  "#1b1b1b",
+                                      "on_primary_container":  "#636565",
+                                      "outline_variant":  "#444748",
+                                      "primary_fixed_dim":  "#c6c6c7",
+                                      "outline":  "#8e9192",
+                                      "inverse_primary":  "#5d5f5f",
+                                      "primary":  "#ffffff",
+                                      "background":  "#131313",
+                                      "on_background":  "#e2e2e2",
+                                      "on_primary_fixed_variant":  "#454747",
+                                      "secondary_container":  "#474746",
+                                      "surface_container_highest":  "#353535",
+                                      "on_secondary":  "#313030",
+                                      "on_secondary_fixed_variant":  "#474746",
+                                      "on_error":  "#690005",
+                                      "on_tertiary_fixed_variant":  "#474747",
+                                      "on_secondary_container":  "#b7b5b4",
+                                      "surface_dim":  "#131313",
+                                      "surface":  "#131313",
+                                      "on_tertiary_container":  "#656464",
+                                      "on_tertiary_fixed":  "#1b1c1c",
+                                      "tertiary_fixed":  "#e4e2e1",
+                                      "on_primary_fixed":  "#1a1c1c",
+                                      "on_surface_variant":  "#c4c7c8",
+                                      "secondary_fixed":  "#e5e2e1",
+                                      "on_surface":  "#e2e2e2"
+                                  },
+                  "designMd":  "---\nname: Obsidian Precision\ncolors:\n  surface: \u0027#131313\u0027\n  surface-dim: \u0027#131313\u0027\n  surface-bright: \u0027#393939\u0027\n  surface-container-lowest: \u0027#0e0e0e\u0027\n  surface-container-low: \u0027#1b1b1b\u0027\n  surface-container: \u0027#1f1f1f\u0027\n  surface-container-high: \u0027#2a2a2a\u0027\n  surface-container-highest: \u0027#353535\u0027\n  on-surface: \u0027#e2e2e2\u0027\n  on-surface-variant: \u0027#c4c7c8\u0027\n  inverse-surface: \u0027#e2e2e2\u0027\n  inverse-on-surface: \u0027#303030\u0027\n  outline: \u0027#8e9192\u0027\n  outline-variant: \u0027#444748\u0027\n  surface-tint: \u0027#c6c6c7\u0027\n  primary: \u0027#ffffff\u0027\n  on-primary: \u0027#2f3131\u0027\n  primary-container: \u0027#e2e2e2\u0027\n  on-primary-container: \u0027#636565\u0027\n  inverse-primary: \u0027#5d5f5f\u0027\n  secondary: \u0027#c8c6c5\u0027\n  on-secondary: \u0027#313030\u0027\n  secondary-container: \u0027#474746\u0027\n  on-secondary-container: \u0027#b7b5b4\u0027\n  tertiary: \u0027#ffffff\u0027\n  on-tertiary: \u0027#303030\u0027\n  tertiary-container: \u0027#e4e2e1\u0027\n  on-tertiary-container: \u0027#656464\u0027\n  error: \u0027#ffb4ab\u0027\n  on-error: \u0027#690005\u0027\n  error-container: \u0027#93000a\u0027\n  on-error-container: \u0027#ffdad6\u0027\n  primary-fixed: \u0027#e2e2e2\u0027\n  primary-fixed-dim: \u0027#c6c6c7\u0027\n  on-primary-fixed: \u0027#1a1c1c\u0027\n  on-primary-fixed-variant: \u0027#454747\u0027\n  secondary-fixed: \u0027#e5e2e1\u0027\n  secondary-fixed-dim: \u0027#c8c6c5\u0027\n  on-secondary-fixed: \u0027#1c1b1b\u0027\n  on-secondary-fixed-variant: \u0027#474746\u0027\n  tertiary-fixed: \u0027#e4e2e1\u0027\n  tertiary-fixed-dim: \u0027#c8c6c6\u0027\n  on-tertiary-fixed: \u0027#1b1c1c\u0027\n  on-tertiary-fixed-variant: \u0027#474747\u0027\n  background: \u0027#131313\u0027\n  on-background: \u0027#e2e2e2\u0027\n  surface-variant: \u0027#353535\u0027\ntypography:\n  headline-lg:\n    fontFamily: Geist\n    fontSize: 40px\n    fontWeight: \u0027700\u0027\n    lineHeight: \u00271.1\u0027\n    letterSpacing: -0.04em\n  headline-md:\n    fontFamily: Geist\n    fontSize: 24px\n    fontWeight: \u0027600\u0027\n    lineHeight: \u00271.2\u0027\n    letterSpacing: -0.02em\n  body-lg:\n    fontFamily: JetBrains Mono\n    fontSize: 16px\n    fontWeight: \u0027400\u0027\n    lineHeight: \u00271.6\u0027\n    letterSpacing: -0.01em\n  body-sm:\n    fontFamily: JetBrains Mono\n    fontSize: 14px\n    fontWeight: \u0027400\u0027\n    lineHeight: \u00271.5\u0027\n    letterSpacing: \u00270\u0027\n  label-caps:\n    fontFamily: JetBrains Mono\n    fontSize: 12px\n    fontWeight: \u0027700\u0027\n    lineHeight: \u00271\u0027\n    letterSpacing: 0.1em\n  mono-data:\n    fontFamily: JetBrains Mono\n    fontSize: 13px\n    fontWeight: \u0027500\u0027\n    lineHeight: \u00271.4\u0027\n    letterSpacing: \u00270\u0027\nspacing:\n  unit: 4px\n  gutter: 16px\n  margin: 24px\n  container-max: 1440px\n---\n\n## Brand \u0026 Style\n\nThis design system is built on the principles of **Forensic Minimalism** and **Technical Brutalism**. The personality is clinical, authoritative, and unapologetically precise. It is designed for high-stakes environments where clarity is paramount and distractions are eliminated. \n\nThe aesthetic focuses on extreme contrast and structural integrity. By removing all color and slate undertones, the UI recedes to allow data and content to become the primary focus. The emotional response is one of absolute focus, reliability, and high-performance engineering. Every line has a purpose; every gap is intentional.\n\n## Colors\n\nThe palette is strictly achromatic, removing all saturation to achieve a forensic look.\n\n- **Backgrounds**: The core canvas is pure `#000000`. Container surfaces use `#0A0A0A` or `#141414` to create subtle separation without losing the \"void\" aesthetic.\n- **Typography**: Primary text is pure `#FFFFFF`. Secondary and metadata text utilize `#A0A0A0` to maintain hierarchy.\n- **Accents**: Interaction states and \"primary\" actions are handled through inversionâ€”solid white backgrounds with black icons or text.\n- **Status**: Do not use red/green/yellow. Represent status through iconography, stroke weight, or fill patterns (e.g., solid vs. dashed lines).\n\n## Typography\n\nTypography is treated as a technical instrument. We utilize a pairing of **Geist** for structural headings and **JetBrains Mono** for all functional, data-heavy, and body text.\n\n- **Scale**: Use large, high-weight headings for clear section entry points.\n- **Monospacing**: JetBrains Mono is used for body text to reinforce the forensic, code-like aesthetic and ensure perfect vertical alignment in data grids.\n- **Hierarchy**: Use \"label-caps\" for metadata and small headers to create a distinct visual texture compared to body copy.\n\n## Layout \u0026 Spacing\n\nThe layout is governed by a **Strict Grid System** based on a 4px baseline. \n\n- **Grid Model**: A 12-column fixed grid for desktop (1440px max-width). Elements must snap to the grid lines.\n- **Borders as Spacers**: Use 1px white or dark gray borders to define zones rather than relying solely on whitespace. This creates a \"blueprint\" feel.\n- **Rhythm**: Use consistent increments (8px, 16px, 24px, 48px). Avoid odd-numbered spacing to maintain the mathematical precision of the interface.\n- **Mobile**: Shift to a 4-column fluid layout with 16px margins. Headlines scale down to 32px to maintain legibility.\n\n## Elevation \u0026 Depth\n\nDepth is achieved through **Tonal Layering** and **Crisp Outlines**, never shadows. \n\n- **Level 0**: `#000000` (Main background).\n- **Level 1**: `#0A0A0A` with a 1px `#262626` border (Cards, Sidebar).\n- **Level 2**: `#141414` with a 1px `#333333` border (Modals, Popovers).\n- **Inversion**: To indicate the highest priority or active state, use a `#FFFFFF` surface with `#000000` content.\n- **Separators**: Use 1px solid lines (`#262626`) for internal dividers. For high-contrast separation, use `#FFFFFF`.\n\n## Shapes\n\nThe shape language is **Sharp (0px)**. \n\nEvery UI elementâ€”buttons, containers, inputs, and tabsâ€”must have 90-degree corners. This reinforces the architectural and forensic nature of the design system. Avoid any rounding, as it softens the clinical aesthetic.\n\n## Components\n\n- **Buttons**:\n  - *Primary*: Solid `#FFFFFF` background, `#000000` text, bold weight.\n  - *Secondary*: Transparent background, 1px `#FFFFFF` border, white text.\n  - *Ghost*: Transparent background, no border, white text with underline on hover.\n- **Input Fields**: 1px `#333333` border on `#000000` background. On focus, the border becomes `#FFFFFF`. Use monospaced font for input text.\n- **Data Tables**: Use 1px horizontal dividers only. Header cells should use the \"label-caps\" typography style with a slight `#1A1A1A` background fill.\n- **Chips/Tags**: Small 1px boxes with monospaced text. For \"Active\" states, invert the colors.\n- **Checkboxes/Radios**: Square geometry (0px radius). Checked state is a solid white fill or a high-contrast \"X\" mark.\n- **Scrollbars**: Minimalist 4px wide bars, color `#333333`, no track background.",
+                  "colorVariant":  "FIDELITY",
+                  "overridePrimaryColor":  "#ffffff",
+                  "overrideSecondaryColor":  "#1a1a1a",
+                  "overrideTertiaryColor":  "#333333",
+                  "overrideNeutralColor":  "#000000",
+                  "spacingScale":  2,
+                  "typography":  {
+                                     "body-lg":  {
+                                                     "fontFamily":  "JetBrains Mono",
+                                                     "fontSize":  "16px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "1.6",
+                                                     "letterSpacing":  "-0.01em"
+                                                 },
+                                     "headline-md":  {
+                                                         "fontFamily":  "Geist",
+                                                         "fontSize":  "24px",
+                                                         "fontWeight":  "600",
+                                                         "lineHeight":  "1.2",
+                                                         "letterSpacing":  "-0.02em"
+                                                     },
+                                     "body-sm":  {
+                                                     "fontFamily":  "JetBrains Mono",
+                                                     "fontSize":  "14px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "1.5",
+                                                     "letterSpacing":  "0"
+                                                 },
+                                     "headline-lg":  {
+                                                         "fontFamily":  "Geist",
+                                                         "fontSize":  "40px",
+                                                         "fontWeight":  "700",
+                                                         "lineHeight":  "1.1",
+                                                         "letterSpacing":  "-0.04em"
+                                                     },
+                                     "label-caps":  {
+                                                        "fontFamily":  "JetBrains Mono",
+                                                        "fontSize":  "12px",
+                                                        "fontWeight":  "700",
+                                                        "lineHeight":  "1",
+                                                        "letterSpacing":  "0.1em"
+                                                    },
+                                     "mono-data":  {
+                                                       "fontFamily":  "JetBrains Mono",
+                                                       "fontSize":  "13px",
+                                                       "fontWeight":  "500",
+                                                       "lineHeight":  "1.4",
+                                                       "letterSpacing":  "0"
+                                                   }
+                                 },
+                  "spacing":  {
+                                  "gutter":  "16px",
+                                  "unit":  "4px",
+                                  "container-max":  "1440px",
+                                  "margin":  "24px"
+                              },
+                  "headlineFontFamily":  "Geist",
+                  "bodyFontFamily":  "Jetbrains Mono",
+                  "labelFontFamily":  "Jetbrains Mono"
+              }
+}

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>On-Device Converter</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "primary": "#ffffff",
+                "surface-container-lowest": "#000000",
+                "surface-dim": "#000000",
+                "secondary-container": "#1a1a1a",
+                "on-surface-variant": "#a3a3a3",
+                "outline": "#ffffff",
+                "tertiary-fixed-dim": "#a3a3a3",
+                "on-secondary-fixed": "#000000",
+                "error-container": "#1a1a1a",
+                "on-tertiary": "#000000",
+                "secondary-fixed-dim": "#a3a3a3",
+                "on-tertiary-fixed-variant": "#a3a3a3",
+                "on-secondary-container": "#ffffff",
+                "tertiary-fixed": "#ffffff",
+                "on-primary-fixed": "#000000",
+                "on-primary": "#000000",
+                "inverse-surface": "#ffffff",
+                "on-background": "#ffffff",
+                "surface-container-highest": "#2a2a2a",
+                "surface-bright": "#1a1a1a",
+                "on-tertiary-container": "#ffffff",
+                "surface-tint": "#ffffff",
+                "tertiary-container": "#1a1a1a",
+                "error": "#ffffff",
+                "on-secondary": "#000000",
+                "on-primary-container": "#000000",
+                "primary-fixed": "#ffffff",
+                "primary-fixed-dim": "#a3a3a3",
+                "background": "#000000",
+                "surface-container": "#0e0e0e",
+                "surface-variant": "#1a1a1a",
+                "surface": "#000000",
+                "on-error": "#000000",
+                "primary-container": "#ffffff",
+                "tertiary": "#ffffff",
+                "on-tertiary-fixed": "#000000",
+                "surface-container-high": "#1a1a1a",
+                "on-error-container": "#ffffff",
+                "on-secondary-fixed-variant": "#a3a3a3",
+                "outline-variant": "#ffffff",
+                "surface-container-low": "#0e0e0e",
+                "secondary": "#ffffff",
+                "inverse-on-surface": "#000000",
+                "on-primary-fixed-variant": "#a3a3a3",
+                "inverse-primary": "#a3a3a3",
+                "secondary-fixed": "#ffffff",
+                "on-surface": "#ffffff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "unit": "4px",
+                "margin-desktop": "32px",
+                "container-padding": "24px",
+                "margin-mobile": "16px"
+        },
+        "fontFamily": {
+                "label-caps": [
+                        "JetBrains Mono"
+                ],
+                "body-lg": [
+                        "JetBrains Mono"
+                ],
+                "code-md": [
+                        "JetBrains Mono"
+                ],
+                "body-sm": [
+                        "JetBrains Mono"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "headline-lg": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "code-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="bg-background text-on-surface font-body-lg min-h-screen flex flex-col antialiased selection:bg-primary selection:text-on-primary">
+<!-- Top App Bar -->
+<header class="bg-surface border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center px-container-padding py-4 w-full max-w-[860px] mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[28px]" data-icon="sync_alt">sync_alt</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">On-Device Converter</span>
+</div>
+<div class="flex gap-4 hidden md:flex items-center">
+<a class="text-primary font-bold font-body-sm text-body-sm hover:bg-surface-container-high transition-colors px-3 py-2 rounded-md" href="#">Converter</a>
+<a class="text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-high transition-colors px-3 py-2 rounded-md" href="#">History</a>
+<a class="text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container-high transition-colors px-3 py-2 rounded-md" href="#">Settings</a>
+</div>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-full p-2"><span class="material-symbols-outlined" data-icon="security">security</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high rounded-full p-2"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-[860px] mx-auto px-container-padding py-margin-desktop flex flex-col gap-margin-desktop">
+<!-- Header Section -->
+<section class="text-center flex flex-col gap-4">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Convert Securely. locally.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Convert documents, images, and audio to Markdown — 100% in your browser, nothing ever leaves your device.</p>
+<div class="inline-flex items-center justify-center gap-2 bg-surface-container-low border border-outline-variant rounded-full px-4 py-1.5 mx-auto w-max mt-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="verified_user">verified_user</span>
+<span class="font-code-md text-code-md text-on-surface-variant">No uploads. No servers. 100% on-device.</span>
+</div>
+</section>
+<!-- Settings Bar -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Language</label>
+<select class="bg-surface-container border border-outline-variant rounded-lg px-4 py-2 text-on-surface font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option>Auto</option>
+<option>English</option>
+<option>Hindi (हिंदी)</option>
+<option>Urdu (اردو)</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Audio Model</label>
+<select class="bg-surface-container border border-outline-variant rounded-lg px-4 py-2 text-on-surface font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option>Tiny (fast)</option>
+<option>Base (better)</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Device</label>
+<select class="bg-surface-container border border-outline-variant rounded-lg px-4 py-2 text-on-surface font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option>Auto (GPU)</option>
+<option>WASM</option>
+</select>
+</div>
+</section>
+<!-- Dropzone -->
+<section class="border-2 border-dashed border-outline-variant rounded-xl bg-surface-container flex flex-col items-center justify-center p-12 hover:border-primary transition-colors cursor-pointer group">
+<div class="bg-surface-container-high rounded-full p-4 mb-4 group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-on-primary" data-icon="upload_file">upload_file</span>
+</div>
+<p class="font-headline-md text-headline-md text-on-surface mb-2">Drag &amp; drop files here</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant">or click to browse</p>
+</section>
+<!-- Active Jobs -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center gap-2 bg-surface-container border border-outline-variant rounded-lg p-3">
+<span class="material-symbols-outlined text-primary animate-spin" data-icon="sync">sync</span>
+<span class="font-code-md text-code-md text-on-surface-variant">First-run: Downloading model (34MB)...</span>
+</div>
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<div>
+<p class="font-code-md text-code-md text-on-surface">legal-brief.pdf</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">1.2MB • Phase: Recognizing text (OCR)</p>
+</div>
+</div>
+<span class="font-code-md text-code-md text-primary">65%</span>
+</div>
+<div class="w-full bg-surface-container-high border border-outline-variant rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-1.5 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<div>
+<p class="font-code-md text-code-md text-on-surface">meeting-notes.docx</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">450KB • Phase: Extracting content</p>
+</div>
+</div>
+<span class="font-code-md text-code-md text-primary">20%</span>
+</div>
+<div class="w-full bg-surface-container-high border border-outline-variant rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-1.5 rounded-full" style="width: 20%"></div>
+</div>
+</div>
+</section>
+<!-- Results / History -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">History</h2>
+<button class="font-label-caps text-label-caps text-primary hover:text-on-surface-variant transition-colors border border-outline-variant px-2 py-1 rounded">Clear all</button>
+</div>
+<!-- Success 1 -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest p-2 rounded flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-1.5 py-0.5 rounded border border-outline-variant">PDF</span>
+<p class="font-code-md text-code-md text-on-surface">annual_report.pdf</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">'Whisper' engine • 2.4MB • 12s duration</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Copy"><span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Download"><span class="material-symbols-outlined text-sm" data-icon="download">download</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Delete"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+<div class="bg-surface-container-high border border-outline-variant rounded p-3 font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                    # Annual Report 2023\n\n## Executive Summary\nThis year has seen unprecedented growth in our core sectors, primarily driven by the expansion into the Asia-Pacific market. Revenue is up 24% year-over-year...
+                </div>
+</div>
+<!-- Success 2 (Urdu) -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest p-2 rounded flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-1.5 py-0.5 rounded border border-outline-variant">Audio</span>
+<p class="font-code-md text-code-md text-on-surface">interview_recording.mp3</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">'Moonshine' engine • 8.1MB • 4m 12s duration</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Copy"><span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Download"><span class="material-symbols-outlined text-sm" data-icon="download">download</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Delete"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+<div class="bg-surface-container-high border border-outline-variant rounded p-3 font-body-sm text-body-sm text-on-surface-variant line-clamp-2" dir="rtl">
+                    # انٹرویو کا خلاصہ
+                    
+                    آج کے اجلاس میں ہم نے نئے منصوبے کی تفصیلات پر غور کیا۔ بنیادی توجہ مارکیٹنگ کی حکمت عملی اور بجٹ کی تقسیم پر تھی۔
+                </div>
+</div>
+<!-- Warning -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-3 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<div class="flex justify-between items-start relative z-10">
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest p-2 rounded flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary" data-icon="warning">warning</span>
+</div>
+<div>
+<p class="font-code-md text-code-md text-on-surface">partial-scan.jpg</p>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Warning: Low OCR confidence (42%)</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Delete"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+<!-- Error -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-4 flex flex-col gap-3 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<div class="flex justify-between items-start relative z-10">
+<div class="flex items-center gap-3">
+<div class="bg-surface-container-lowest p-2 rounded flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary" data-icon="error">error</span>
+</div>
+<div>
+<p class="font-code-md text-code-md text-on-surface">protected.pdf</p>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Error: Password-protected PDF</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Delete"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-transparent full-width pb-8 flex flex-col items-center gap-4 w-full max-w-[860px] mx-auto text-center px-container-padding border-t border-outline-variant mt-12 pt-8">
+<div class="font-headline-md text-headline-md text-on-surface-variant opacity-80">On-Device Converter</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">2024 On-Device Converter. No data leaves your machine.</p>
+<div class="flex gap-4">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Github</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Documentation</a>
+</div>
+</footer>
+</body></html>
