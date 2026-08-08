@@ -12,8 +12,9 @@ import { detectFile } from './filetype';
 import { decodeText, mergePdfText } from './doc-text';
 import { effectiveKey, langDef, type LangKey } from './langs';
 import { renderPdfPage, releasePdf } from './pdf-render';
-import { ConversionResult, toDetected } from './result';
+import { ConversionResult, formatBytes, toDetected } from './result';
 import { createWorker, WorkerCallError, WorkerManager } from './worker-manager';
+import type { AsrModelKey } from './models';
 import type {
   DocAnalyzeResult,
   OcrImageResult,
@@ -21,13 +22,18 @@ import type {
 
 const manager = new WorkerManager(createWorker);
 
+/** Default cap for a single input file (spec §10 — huge files). */
+const DEFAULT_MAX_FILE_SIZE = 512 * 1024 * 1024;
+
 export interface ConvertOptions {
-  /** UI-selected language; 'auto' → smallest viable (English). */
+  /** UI-selected language; 'auto' → English. Used as the Whisper hint + OCR language. */
   lang?: LangKey;
-  /** ASR model tier (Moonshine/Whisper). Default 'tiny'. */
-  asrTier?: 'tiny' | 'base';
+  /** ASR model (spec §6): Whisper Tiny multilingual by default; Moonshine is an English-only opt-in. */
+  asrModel?: AsrModelKey;
   /** ASR device. Default 'auto' (WebGPU→WebNN→WASM inside transformers.js). */
   asrDevice?: 'auto' | 'wasm';
+  /** Reject files larger than this many bytes (default 512 MB). */
+  maxFileSize?: number;
   onProgress?: (p: ConvertProgress) => void;
 }
 
@@ -82,6 +88,15 @@ export async function convertFile(
     onProgress?.({ phase, percent, detail });
 
   try {
+    const maxSize = opts.maxFileSize ?? DEFAULT_MAX_FILE_SIZE;
+    if (bytes.byteLength > maxSize) {
+      return fail(
+        fileName,
+        'too-large',
+        `This file is ${formatBytes(bytes.byteLength)} — the limit is ${formatBytes(maxSize)}. Split it into smaller files or reduce the resolution.`,
+      );
+    }
+
     const info = detectFile(bytes, fileName);
     p('reading', 10, info.label);
 
@@ -178,11 +193,11 @@ export async function convertFile(
     // Audio/video → ASR (decode + chunk inside the worker).
     if (info.category === 'audio' || info.category === 'video') {
       p('asr', 30, 'Loading model…');
-      const tier = opts.asrTier ?? 'tiny';
+      const model = opts.asrModel ?? 'whisper-tiny';
       const device = opts.asrDevice ?? 'auto';
       const result = await manager.call<{ text: string; model: string; language: string; durationSec: number; chunks: number }>('asr', {
         id, type: 'transcribe', bytes: bytes.slice().buffer,
-        mime: mimeForFormat(info.format), language: lang, tier, device,
+        mime: mimeForFormat(info.format), language: lang, model, device,
       }, { onProgress: (ev) => p(uiPhase(ev.phase, 'asr'), 30 + (ev.percent ?? 0) * 0.6, ev.detail) });
       if (!result.text.trim()) warnings.push('No speech was detected in this audio.');
       return {

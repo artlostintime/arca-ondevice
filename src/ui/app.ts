@@ -6,16 +6,16 @@
 import { convertFile, fail, type ConvertProgress } from '../lib/convert';
 import { addResult, clearResults, deleteResult, listResults } from '../lib/db';
 import { buildZip, combinedMarkdown, uniqueZipNames, zipEntryName } from '../lib/export';
-import { LANGS, effectiveKey, langDef, type LangKey } from '../lib/langs';
+import { LANGS, effectiveKey, type LangKey } from '../lib/langs';
 import { detectTextDir, downloadText, renderMarkdown } from '../lib/markdown';
 import { JobPool } from '../lib/queue';
-import { ASR_MODELS, ASR_SIZES, OCR_DET, OCR_REC } from '../lib/models';
+import { ASR_MODELS, ASR_SIZES, OCR_DET, OCR_REC, parseAsrModel, type AsrModelKey } from '../lib/models';
 import { formatBytes, type ConversionResult } from '../lib/result';
 import { confirmButton, downloadBlob, el, esc, icon, toast } from './dom';
 
 interface Settings {
   lang: LangKey;
-  asrTier: 'tiny' | 'base';
+  asrModel: AsrModelKey;
   asrDevice: 'auto' | 'wasm';
 }
 
@@ -40,7 +40,7 @@ const PHASE_LABELS: Record<string, string> = {
 };
 
 export function startApp(root: HTMLElement): void {
-  const settings: Settings = { lang: 'auto', asrTier: 'tiny', asrDevice: 'auto' };
+  const settings: Settings = { lang: 'auto', asrModel: 'whisper-tiny', asrDevice: 'auto' };
   const jobs = new Map<string, Job>();
   const results: ConversionResult[] = [];
   const pool = new JobPool(2);
@@ -73,10 +73,12 @@ export function startApp(root: HTMLElement): void {
       renderModelInfo();
     }),
     makeSelect('Audio model', [
-      { value: 'tiny', label: 'Tiny (fast, smallest)' },
-      { value: 'base', label: 'Base (more accurate)' },
-    ], 'tiny', (v) => {
-      settings.asrTier = v as Settings['asrTier'];
+      { value: 'whisper-tiny', label: 'Whisper Tiny (multilingual, recommended)' },
+      { value: 'whisper-base', label: 'Whisper Base (multilingual, more accurate)' },
+      { value: 'moonshine-tiny', label: 'Moonshine Tiny (English-only, fastest)' },
+      { value: 'moonshine-base', label: 'Moonshine Base (English-only)' },
+    ], 'whisper-tiny', (v) => {
+      settings.asrModel = v as Settings['asrModel'];
       renderModelInfo();
     }),
     makeSelect('Device', [
@@ -340,7 +342,7 @@ export function startApp(root: HTMLElement): void {
       const bytes = new Uint8Array(await file.arrayBuffer());
       const result = await convertFile(bytes, file.name, {
         lang: settings.lang,
-        asrTier: settings.asrTier,
+        asrModel: settings.asrModel,
         asrDevice: settings.asrDevice,
         onProgress: (p: ConvertProgress) => {
           job.phase = p.phase;
@@ -635,59 +637,55 @@ interface AsrProfile {
   weaknesses: string[];
 }
 
-const ASR_PROFILES: Record<'moonshine' | 'whisper', Record<'tiny' | 'base', AsrProfile>> = {
-  moonshine: {
-    tiny: {
-      name: 'Moonshine Tiny',
-      strengths: [
-        'Smallest and fastest model — near-real-time on CPU',
-        'Strong accuracy on clear English speech',
-        'Low memory use; handles long audio',
-      ],
-      weaknesses: [
-        'English only — no Hindi or Urdu',
-        'Stumbles on heavy noise or strong accents',
-        'No punctuation or capitalization',
-      ],
-    },
-    base: {
-      name: 'Moonshine Base',
-      strengths: [
-        'Better accuracy than Tiny on difficult English',
-        'Still compact and fast (~60 MB)',
-        'Low memory use; handles long audio',
-      ],
-      weaknesses: [
-        'English only — no Hindi or Urdu',
-        'Slower than Tiny',
-      ],
-    },
+const ASR_PROFILES: Record<AsrModelKey, AsrProfile> = {
+  'whisper-tiny': {
+    name: 'Whisper Tiny',
+    strengths: [
+      'Multilingual — English, Hindi, Urdu and more',
+      'Robust to background noise and accents',
+      'Adds punctuation and capitalization',
+    ],
+    weaknesses: [
+      'Slower than Moonshine on English',
+      'Can invent words on silence or music',
+    ],
   },
-  whisper: {
-    tiny: {
-      name: 'Whisper Tiny',
-      strengths: [
-        'Multilingual — Hindi and Urdu supported',
-        'Robust to background noise and accents',
-        'Adds punctuation and capitalization',
-      ],
-      weaknesses: [
-        'Slower than Moonshine',
-        'Can invent words on silence or music',
-      ],
-    },
-    base: {
-      name: 'Whisper Base',
-      strengths: [
-        'Best accuracy of the four ASR models',
-        'Multilingual — Hindi and Urdu supported',
-        'Handles noisy recordings well',
-      ],
-      weaknesses: [
-        'Largest and slowest option (~73 MB)',
-        'Uses the most memory',
-      ],
-    },
+  'whisper-base': {
+    name: 'Whisper Base',
+    strengths: [
+      'Best accuracy of the four ASR models',
+      'Multilingual — English, Hindi, Urdu and more',
+      'Handles noisy recordings well',
+    ],
+    weaknesses: [
+      'Largest and slowest option (~73 MB)',
+      'Uses the most memory',
+    ],
+  },
+  'moonshine-tiny': {
+    name: 'Moonshine Tiny',
+    strengths: [
+      'Smallest and fastest model — near-real-time on CPU',
+      'Strong accuracy on clear English speech',
+      'Low memory use; handles long audio',
+    ],
+    weaknesses: [
+      'English only — no Hindi or Urdu',
+      'Stumbles on heavy noise or strong accents',
+      'No punctuation or capitalization',
+    ],
+  },
+  'moonshine-base': {
+    name: 'Moonshine Base',
+    strengths: [
+      'Better accuracy than Tiny on difficult English',
+      'Still compact and fast (~60 MB)',
+      'Low memory use; handles long audio',
+    ],
+    weaknesses: [
+      'English only — no Hindi or Urdu',
+      'Slower than Moonshine Tiny',
+    ],
   },
 };
 
@@ -756,12 +754,12 @@ const COMPUTE_PROFILES: Record<'auto' | 'wasm', AsrProfile> = {
 /** Settings tab: which model will actually be used, and its trade-offs. */
 function buildModelInfo(settings: Settings): HTMLElement {
   const lang = effectiveKey(settings.lang);
-  const def = langDef(lang);
-  const asr = ASR_PROFILES[def.asrModel][settings.asrTier];
+  const asr = ASR_PROFILES[settings.asrModel];
   const ocr = OCR_PROFILES[lang];
   const compute = COMPUTE_PROFILES[settings.asrDevice];
 
-  const asrId = ASR_MODELS[def.asrModel][settings.asrTier];
+  const { family, tier } = parseAsrModel(settings.asrModel);
+  const asrId = ASR_MODELS[family][tier];
   const asrSize = formatBytes(ASR_SIZES[asrId] ?? 0);
   const ocrBytes = OCR_DET.sizeBytes + (OCR_REC[lang]?.sizeBytes ?? 0);
 

@@ -48,6 +48,20 @@ export interface AsrModelId {
   base: string;
 }
 
+export type AsrModelKey = 'whisper-tiny' | 'whisper-base' | 'moonshine-tiny' | 'moonshine-base';
+
+/**
+ * Parse a UI-selected ASR model key into its family + tier. Whisper is the
+ * multilingual primary (spec §6); Moonshine is an opt-in English-only option.
+ */
+export function parseAsrModel(key: AsrModelKey): { family: 'moonshine' | 'whisper'; tier: 'tiny' | 'base' } {
+  const i = key.lastIndexOf('-');
+  return {
+    family: key.slice(0, i) as 'moonshine' | 'whisper',
+    tier: key.slice(i + 1) as 'tiny' | 'base',
+  };
+}
+
 export const ASR_MODELS: Record<'moonshine' | 'whisper', AsrModelId> = {
   moonshine: {
     tiny: 'onnx-community/moonshine-tiny-ONNX',

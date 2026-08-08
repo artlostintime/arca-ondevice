@@ -6,9 +6,9 @@
  * each chunk → overlap-aware stitch. Chunking lives here (in the worker) so
  * the main thread never sees raw PCM.
  *
- * Model selection follows langs.ts: English uses Moonshine (tiny by default,
- * the smallest viable model), Hindi/Urdu use Whisper-tiny/base with the
- * matching whisper language code.
+ * Model selection (spec §6): the multilingual Whisper Tiny is the primary
+ * default for every language; Moonshine Tiny/Base are explicit opt-ins for
+ * English-only speed. Whisper gets the UI language as a hint.
  */
 import {
   env,
@@ -18,7 +18,7 @@ import {
 } from '@huggingface/transformers';
 import { chunkAudio, decodeToPcm16k, stitchAll } from '../lib/audio';
 import { effectiveKey, langDef } from '../lib/langs';
-import { ASR_MODELS } from '../lib/models';
+import { ASR_MODELS, parseAsrModel, type AsrModelKey } from '../lib/models';
 import type { AsrTranscribeRequest, WorkerError, WorkerProgress } from './comms';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
@@ -62,8 +62,8 @@ async function getTranscriber(id: string, modelId: string, device: 'auto' | 'was
 }
 
 async function handle(req: AsrTranscribeRequest): Promise<void> {
-  const lang = langDef(effectiveKey(req.language));
-  const modelId = ASR_MODELS[lang.asrModel][req.tier];
+  const { family, tier } = parseAsrModel(req.model as AsrModelKey);
+  const modelId = ASR_MODELS[family][tier];
 
   const trans = await getTranscriber(req.id, modelId, req.device);
 
@@ -75,9 +75,12 @@ async function handle(req: AsrTranscribeRequest): Promise<void> {
   for (let i = 0; i < chunks.length; i++) {
     progress(req.id, 'transcribing', `Transcribing chunk ${i + 1}/${chunks.length}…`, Math.round(((i + 1) / chunks.length) * 100));
     const kwargs: Record<string, unknown> = {};
-    if (lang.whisperCode) {
-      kwargs.language = lang.whisperCode;
-      kwargs.task = 'transcribe';
+    if (family === 'whisper') {
+      const code = langDef(effectiveKey(req.language)).whisperCode;
+      if (code) {
+        kwargs.language = code;
+        kwargs.task = 'transcribe';
+      }
     }
     const out = await trans(chunks[i].samples, kwargs as never);
     const text = (out as { text: string }).text ?? '';
@@ -92,7 +95,7 @@ async function handle(req: AsrTranscribeRequest): Promise<void> {
     type: 'asr-result',
     text: fullText,
     model: modelId,
-    language: lang.key,
+    language: effectiveKey(req.language),
     durationSec,
     chunks: chunks.length,
   });

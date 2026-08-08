@@ -9,7 +9,7 @@
  */
 import * as ort from 'onnxruntime-web';
 import { fetchCachedModel, OCR_DET, OCR_REC, ORT_CDN, type ModelProgress } from '../lib/models';
-import { binarize, contrastStretch, estimateSkew, inkBox, median3, otsuThreshold, rotateGray, toGray } from '../lib/preprocess';
+import { binarize, contrastStretch, estimateSkew, median3, otsuThreshold, rotateGray, toGray } from '../lib/preprocess';
 import type { OcrImageRequest, WorkerError, WorkerProgress } from './comms';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
@@ -18,6 +18,13 @@ const DET_MEAN = [0.485, 0.456, 0.406];
 const DET_STD = [0.229, 0.224, 0.225];
 const REC_MEAN = [0.5, 0.5, 0.5];
 const REC_STD = [0.5, 0.5, 0.5];
+
+/**
+ * Accuracy strategy (spec §7): small model first, quality check, then fall
+ * back to a stronger path. Below this mean line-confidence the PP-OCR result
+ * is deemed untrustworthy and Tesseract retries the page.
+ */
+const OCR_QUALITY_THRESHOLD = 0.5;
 
 let ortReady = false;
 let detSession: ort.InferenceSession | null = null;
@@ -316,6 +323,10 @@ function ctcDecode(logits: Float32Array, dims: number[], dict: string[]): { text
  * Pure numeric helpers (grayscale, Otsu, binarize, ink box, median, deskew,
  * rotation, contrast) live in lib/preprocess.ts so they're unit-testable.
  * This function orchestrates them and packs the result back into ImageData.
+ *
+ * Preprocessing runs on the FULL image (same size as the input): the text
+ * detector is trained on page-like images, so feeding it a tight ink-box
+ * crop degrades detection. Contrast/deskew/denoise still apply page-wide.
  */
 function preprocess(imageData: ImageData): ImageData {
   const w = imageData.width, h = imageData.height;
@@ -325,26 +336,16 @@ function preprocess(imageData: ImageData): ImageData {
 
   const thresh = otsuThreshold(stretched, w, h);
   const bin = binarize(stretched, w, h, thresh);
-  const box = inkBox(bin, w, h);
-  if (!box || box.x1 - box.x0 < 4 || box.y1 - box.y0 < 4) return imageData;
-
-  const cw = box.x1 - box.x0 + 1, ch = box.y1 - box.y0 + 1;
-  const cropped = new Uint8Array(cw * ch);
-  for (let y = 0; y < ch; y++) {
-    for (let x = 0; x < cw; x++) {
-      cropped[y * cw + x] = stretched[(box.y0 + y) * w + (box.x0 + x)];
-    }
+  let rotated = stretched;
+  if (bin.some((v) => v === 1)) {
+    const angle = estimateSkew(bin, w, h);
+    if (angle !== 0) rotated = rotateGray(stretched, w, h, (angle * Math.PI) / 180);
   }
 
-  // Deskew on the binarized crop.
-  const smallBin = binarize(cropped, cw, ch, thresh);
-  const angle = estimateSkew(smallBin, cw, ch);
-  const rotated = angle === 0 ? cropped : rotateGray(cropped, cw, ch, (angle * Math.PI) / 180);
-
-  const denoised = median3(rotated, cw, ch);
+  const denoised = median3(rotated, w, h);
 
   // Pack back into an ImageData (grayscale replicated to RGB).
-  const out = new ImageData(cw, ch);
+  const out = new ImageData(w, h);
   for (let i = 0, j = 0; i < denoised.length; i++, j += 4) {
     out.data[j] = denoised[i];
     out.data[j + 1] = denoised[i];
@@ -503,6 +504,11 @@ ctx.onmessage = async (ev: MessageEvent<OcrImageRequest>) => {
     let result;
     try {
       result = await recognizePP(req.id, imageData, req.language);
+      const weak = result.lines.length === 0 || result.meanConfidence < OCR_QUALITY_THRESHOLD;
+      if (weak) {
+        progress(req.id, 'fallback', `Low OCR confidence — switching to Tesseract…`);
+        result = await recognizeTesseract(req.id, imageData, req.language);
+      }
     } catch (e) {
       progress(req.id, 'fallback', 'Switching to Tesseract fallback…');
       result = await recognizeTesseract(req.id, imageData, req.language);

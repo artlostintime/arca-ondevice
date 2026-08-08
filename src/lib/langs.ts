@@ -4,19 +4,17 @@ export interface LangDef {
   key: LangKey;
   label: string;
   native: string;
-  /** ASR model family for this language. */
-  asrModel: 'moonshine' | 'whisper';
-  /** Whisper language code (ISO-639-1). */
+  /** Whisper language code (ISO-639-1), used as a transcription hint when the ASR family is Whisper. */
   whisperCode?: string;
   /** OCR recognition dict key used by the OCR worker. */
   ocrKey: 'en' | 'hi' | 'ur';
 }
 
 export const LANGS: LangDef[] = [
-  { key: 'auto', label: 'Auto (English)', native: 'EN', asrModel: 'moonshine', ocrKey: 'en' },
-  { key: 'en', label: 'English', native: 'EN', asrModel: 'moonshine', ocrKey: 'en' },
-  { key: 'hi', label: 'Hindi', native: 'हिन्दी', asrModel: 'whisper', whisperCode: 'hi', ocrKey: 'hi' },
-  { key: 'ur', label: 'Urdu', native: 'اردو', asrModel: 'whisper', whisperCode: 'ur', ocrKey: 'ur' },
+  { key: 'auto', label: 'Auto (English)', native: 'EN', ocrKey: 'en' },
+  { key: 'en', label: 'English', native: 'EN', whisperCode: 'en', ocrKey: 'en' },
+  { key: 'hi', label: 'Hindi', native: 'हिन्दी', whisperCode: 'hi', ocrKey: 'hi' },
+  { key: 'ur', label: 'Urdu', native: 'اردو', whisperCode: 'ur', ocrKey: 'ur' },
 ];
 
 export function langDef(key: LangKey): LangDef {

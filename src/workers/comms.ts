@@ -1,4 +1,5 @@
 import type { LangKey } from '../lib/langs';
+import type { AsrModelKey } from '../lib/models';
 
 export type WorkerCategory = 'doc' | 'ocr' | 'asr';
 
@@ -34,7 +35,7 @@ export interface AsrTranscribeRequest {
   bytes: ArrayBuffer;
   mime: string;
   language: Exclude<LangKey, 'auto'>;
-  tier: 'tiny' | 'base';
+  model: AsrModelKey;
   device: 'auto' | 'wasm';
 }
 
