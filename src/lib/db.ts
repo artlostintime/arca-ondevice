@@ -1,26 +1,24 @@
-import { openDB, type IDBPDatabase } from 'idb';
 import type { ConversionResult } from './result';
 
 const DB_NAME = 'arca';
 const STORE = 'results';
 
-let dbPromise: Promise<IDBPDatabase> | null = null;
+let dbPromise: Promise<IDBDatabase | null> | null = null;
 
 async function init(): Promise<boolean> {
-  if (dbPromise) return true;
-  try {
-    dbPromise = openDB(DB_NAME, 1, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains(STORE)) {
-          db.createObjectStore(STORE, { keyPath: 'id' });
-        }
-      },
-    });
-    await dbPromise;
-    return true;
-  } catch {
-    return false;
-  }
+  if (dbPromise) return (await dbPromise) !== null;
+  if (typeof indexedDB === 'undefined') return false;
+  dbPromise = new Promise<IDBDatabase | null>((resolve) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  });
+  const db = await dbPromise;
+  return db !== null;
 }
 
 const memory: ConversionResult[] = [];
@@ -31,12 +29,17 @@ export async function addResult(r: ConversionResult): Promise<void> {
     memory.length = Math.min(memory.length, 200);
     return;
   }
-  (await dbPromise)!.put(STORE, r);
+  (await dbPromise)!.transaction(STORE, 'readwrite').objectStore(STORE).put(r);
 }
 
 export async function listResults(): Promise<ConversionResult[]> {
   if (!(await init())) return memory;
-  const all = await (await dbPromise)!.getAll(STORE);
+  const db = (await dbPromise)!;
+  const all = await new Promise<ConversionResult[]>((resolve, reject) => {
+    const req = db.transaction(STORE).objectStore(STORE).getAll();
+    req.onsuccess = () => resolve(req.result as ConversionResult[]);
+    req.onerror = () => reject(req.error);
+  });
   all.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
   return all;
 }
@@ -47,7 +50,7 @@ export async function deleteResult(id: string): Promise<void> {
     if (i >= 0) memory.splice(i, 1);
     return;
   }
-  (await dbPromise)!.delete(STORE, id);
+  (await dbPromise)!.transaction(STORE, 'readwrite').objectStore(STORE).delete(id);
 }
 
 export async function clearResults(): Promise<void> {
@@ -55,5 +58,5 @@ export async function clearResults(): Promise<void> {
     memory.length = 0;
     return;
   }
-  (await dbPromise)!.clear(STORE);
+  (await dbPromise)!.transaction(STORE, 'readwrite').objectStore(STORE).clear();
 }
