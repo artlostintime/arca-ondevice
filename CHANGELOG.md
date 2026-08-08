@@ -17,3 +17,19 @@ All notable changes to Arca are tracked here. Format follows [Keep a Changelog](
 ### Changed
 
 - **AGENTS.md** updated to reflect the multilingual-first ASR default and the quality-check-before-fallback OCR strategy.
+
+### Removed
+
+- **`idb` dependency** in favour of the native `IndexedDB` API. `db.ts` had a single object store and four operations (put/getAll/delete/clear), so the wrapper added weight without value. Behaviour (in-memory fallback for private mode / quota errors, fire-and-forget writes, sorted `listResults`) is preserved.
+- **Dead worker-management helpers:** `disposeWorkers`, `WorkerManager.terminateAll`, and `WorkerHandle.cancel` had no callers. `env.allowLocalModels = false` was already the default in a worker context and the `env` import is no longer needed in `asr.worker.ts`.
+
+### Refactored
+
+- **`ModelDownloadError` class** collapsed to a plain `Error` carrying `.code = 'MODEL_DOWNLOAD'`; the class only ever held a single constant and was only caught inside the same file.
+- **`fetchWithProgress`** now returns `Uint8Array` directly instead of wrapping buffered bytes in a synthetic `Response` solely so callers could call `.arrayBuffer()`; `fetchCachedModel` no longer does an extra `arrayBuffer()` round-trip.
+- **`decodeText`**: `TextDecoder('utf-16le' | 'utf-16be')` already strip their own BOM, so the manual `slice(2)` is gone. UTF-8 BOM still needs an explicit slice because Node's `TextDecoder('utf-8', { ignoreBOM: true })` does not actually strip the BOM in this engine.
+- **`AudioChunk` interface removed** — `chunkAudio` now returns `Float32Array[]` since only `.samples` was ever read at the call sites (worker + test).
+- **`LangDef`, `OcrRecModel`, `AsrModelId`** inlined as file-private structural types; only used in their declaring module.
+- **`Detected` + `toDetected` removed** — `FileTypeInfo.reason` is already optional, so `ConversionResult.detected` is now typed as `FileTypeInfo` directly.
+- **`downloadText` `ext` parameter dropped** — every call site passed `'md'` and the `.txt` branch had no callers.
+- **`WorkerFactory` / `CallHandlers`** no longer exported; only used inside `worker-manager.ts`.
