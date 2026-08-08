@@ -17,7 +17,7 @@ export class WorkerCallError extends Error {
   }
 }
 
-export interface CallHandlers {
+interface CallHandlers {
   onProgress?: (p: WorkerProgress) => void;
 }
 
@@ -96,13 +96,6 @@ class WorkerHandle {
     this.pending = null;
   }
 
-  cancel(code = 'cancelled', message = 'Cancelled'): void {
-    const p = this.pending;
-    this.finish();
-    this.terminate();
-    p?.reject(new WorkerCallError(code, message));
-  }
-
   terminate(): void {
     try {
       this.worker.terminate();
@@ -112,7 +105,7 @@ class WorkerHandle {
   }
 }
 
-export type WorkerFactory = (category: WorkerCategory) => Worker;
+type WorkerFactory = (category: WorkerCategory) => Worker;
 
 export class WorkerManager {
   private handles: Partial<Record<WorkerCategory, WorkerHandle>> = {};
@@ -134,13 +127,6 @@ export class WorkerManager {
       this.handles[category] = h;
     }
     return h;
-  }
-
-  terminateAll(): void {
-    for (const key of Object.keys(this.handles) as WorkerCategory[]) {
-      this.handles[key]?.terminate();
-      delete this.handles[key];
-    }
   }
 }
 

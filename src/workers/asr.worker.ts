@@ -11,7 +11,6 @@
  * English-only speed. Whisper gets the UI language as a hint.
  */
 import {
-  env,
   pipeline,
   type AutomaticSpeechRecognitionPipeline,
   type ProgressInfo,
@@ -22,8 +21,6 @@ import { ASR_MODELS, parseAsrModel, type AsrModelKey } from '../lib/models';
 import type { AsrTranscribeRequest, WorkerError, WorkerProgress } from './comms';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
-
-env.allowLocalModels = false;
 
 let transcriber: AutomaticSpeechRecognitionPipeline | null = null;
 let loadedKey = '';
@@ -82,7 +79,7 @@ async function handle(req: AsrTranscribeRequest): Promise<void> {
         kwargs.task = 'transcribe';
       }
     }
-    const out = await trans(chunks[i].samples, kwargs as never);
+    const out = await trans(chunks[i], kwargs as never);
     const text = (out as { text: string }).text ?? '';
     if (text.trim()) parts.push(text);
   }

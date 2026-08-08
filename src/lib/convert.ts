@@ -12,7 +12,7 @@ import { detectFile } from './filetype';
 import { decodeText, mergePdfText } from './doc-text';
 import { effectiveKey, langDef, type LangKey } from './langs';
 import { renderPdfPage, releasePdf } from './pdf-render';
-import { ConversionResult, formatBytes, toDetected } from './result';
+import { ConversionResult, formatBytes } from './result';
 import { createWorker, WorkerCallError, WorkerManager } from './worker-manager';
 import type { AsrModelKey } from './models';
 import type {
@@ -83,10 +83,8 @@ export async function convertFile(
   const onProgress = opts.onProgress;
   const lang = effectiveKey(opts.lang ?? 'auto');
   const ocrLang = langDef(lang).ocrKey;
-
   const p = (phase: ConvertProgress['phase'], percent: number, detail?: string) =>
     onProgress?.({ phase, percent, detail });
-
   try {
     const maxSize = opts.maxFileSize ?? DEFAULT_MAX_FILE_SIZE;
     if (bytes.byteLength > maxSize) {
@@ -96,20 +94,17 @@ export async function convertFile(
         `This file is ${formatBytes(bytes.byteLength)} — the limit is ${formatBytes(maxSize)}. Split it into smaller files or reduce the resolution.`,
       );
     }
-
     const info = detectFile(bytes, fileName);
     p('reading', 10, info.label);
-
     if (info.category === 'unsupported' || info.category === 'unknown') {
       return fail(fileName, info.format, info.reason ?? `Unsupported file type (${info.label}).`);
     }
-
     // Plain text — decode directly, no worker needed.
     if (info.category === 'text') {
       const md = '```text\n' + decodeText(bytes) + '\n```';
       return {
         id, fileName,
-        detected: toDetected(info),
+        detected: info,
         markdown: md,
         metadata: {
           engine: 'text', fallbacksUsed: [], durationMs: Date.now() - started,
@@ -118,20 +113,18 @@ export async function convertFile(
         warnings, createdAt: Date.now(), status: 'ok',
       };
     }
-
     // Documents (PDF/office/csv/epub/rtf)
     if (info.category === 'document') {
       const result = await manager.call<DocAnalyzeResult>('doc', {
         id, type: 'analyze', sessionId: id, bytes, format: info.format, name: fileName,
       }, { onProgress: (ev) => p('analyzing', 20 + (ev.percent ?? 0) * 0.2, ev.detail) });
-
       const isPdf = info.format === 'pdf' || result.kind === 'pdf';
       if (isPdf) {
         const needOcr = result.pagesNeedingOcr ?? [];
         const ocrByPage = new Map<number, string>();
         try {
           if (needOcr.length) {
-            p('ocr', 40, `OCR-ing ${needOcr.length} scanned page${needOcr.length > 1 ? 's' : ''}…`);
+            p('ocr', 40, `OCR-ing ${needOcr.length} scanned page${needOcr.length > 1 ? 's' : ''}.`);
             for (const page of needOcr) {
               const pixels = await renderPdfPage(id, bytes, page, 2200);
               const ocr = await manager.call<OcrImageResult>('ocr', {
@@ -147,7 +140,7 @@ export async function convertFile(
         const markdown = mergePdfText(result.markdown, result.pageCount ?? needOcr.length, ocrByPage);
         return {
           id, fileName,
-          detected: toDetected(info),
+          detected: info,
           markdown,
           metadata: {
             engine: 'pdf-inspector' + (needOcr.length ? '+ocr' : ''),
@@ -158,9 +151,8 @@ export async function convertFile(
           warnings, createdAt: Date.now(), status: 'ok',
         };
       }
-
       return {
-        id, fileName, detected: toDetected(info), markdown: result.markdown,
+        id, fileName, detected: info, markdown: result.markdown,
         metadata: {
           engine: 'anydoc', fallbacksUsed: fallbacks, durationMs: Date.now() - started,
           sizeBytes: bytes.byteLength,
@@ -168,19 +160,18 @@ export async function convertFile(
         warnings, createdAt: Date.now(), status: 'ok',
       };
     }
-
     // Images → OCR directly.
     if (info.category === 'image') {
       if (info.reason) warnings.push(info.reason);
       p('ocr', 30, 'Recognizing text…');
       const ocr = await manager.call<OcrImageResult>('ocr', {
-        id, type: 'ocr-image', bytes, mime: `image/${info.format === 'jpeg' ? 'jpeg' : info.format}`,
+        id, type: 'ocr-image', bytes, mime: `image/${info.format}`,
         language: ocrLang,
       }, { onProgress: (ev) => p(uiPhase(ev.phase, 'ocr'), 30 + (ev.percent ?? 0) * 0.6, ev.detail) });
       if (ocr.engine === 'tesseract') fallbacks.push('OCR: Tesseract');
       if (!ocr.text.trim()) warnings.push('No text was detected in this image.');
       return {
-        id, fileName, detected: toDetected(info), markdown: ocr.text || '_No text detected._',
+        id, fileName, detected: info, markdown: ocr.text || '_No text detected._',
         metadata: {
           engine: 'rapidocr', fallbacksUsed: fallbacks, durationMs: Date.now() - started,
           sizeBytes: bytes.byteLength,
@@ -189,7 +180,6 @@ export async function convertFile(
         warnings, createdAt: Date.now(), status: 'ok',
       };
     }
-
     // Audio/video → ASR (decode + chunk inside the worker).
     if (info.category === 'audio' || info.category === 'video') {
       p('asr', 30, 'Loading model…');
@@ -201,7 +191,7 @@ export async function convertFile(
       }, { onProgress: (ev) => p(uiPhase(ev.phase, 'asr'), 30 + (ev.percent ?? 0) * 0.6, ev.detail) });
       if (!result.text.trim()) warnings.push('No speech was detected in this audio.');
       return {
-        id, fileName, detected: toDetected(info), markdown: result.text || '_No speech detected._',
+        id, fileName, detected: info, markdown: result.text || '_No speech detected._',
         metadata: {
           engine: result.model, fallbacksUsed: fallbacks, durationMs: Date.now() - started,
           sizeBytes: bytes.byteLength,
@@ -209,7 +199,6 @@ export async function convertFile(
         warnings, createdAt: Date.now(), status: 'ok',
       };
     }
-
     return fail(fileName, 'unhandled', `Unhandled category: ${info.category}.`);
   } catch (e) {
     if (e instanceof WorkerCallError) {
@@ -230,9 +219,4 @@ export async function convertFile(
       error: { code: 'internal', message: msg },
     };
   }
-}
-
-/** Cleanup: terminate all workers (e.g. on page unload / worker reuse). */
-export function disposeWorkers(): void {
-  manager.terminateAll();
 }
