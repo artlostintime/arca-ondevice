@@ -51,13 +51,14 @@ export function startApp(root: HTMLElement): void {
   const resultsListEl = el('div', { class: 'cards' });
   const filterEl = el('input', { class: 'filter', type: 'search', placeholder: 'Filter history…', 'aria-label': 'Filter history' }) as HTMLInputElement;
   let filterQuery = '';
-  const clearAllBtn = el('button', {}, ['Clear all']);
+  const clearAllBtn = el('button', { disabled: '' }, ['Clear all']) as HTMLButtonElement;
   confirmButton(clearAllBtn, () => clearHistory());
+  const dlAll = downloadAllWrap(exportZip, exportCombined);
   const resultsWrap = el('div', { class: 'results' }, [
     el('div', { class: 'results-head' }, [
       el('h2', {}, ['History']),
       el('div', { class: 'head-actions' }, [
-        downloadAllWrap(exportZip, exportCombined),
+        dlAll.root,
         clearAllBtn,
       ]),
     ]),
@@ -103,9 +104,9 @@ export function startApp(root: HTMLElement): void {
 
   const converterView = el('section', { class: 'view' }, [
     el('section', { class: 'hero' }, [
-      el('h1', {}, ['Convert Securely. locally.']),
+      el('h1', {}, ['Convert. Locally. Securely.']),
       el('p', {}, ['Convert documents, images, and audio to Markdown — 100% in your browser, nothing ever leaves your device.']),
-      el('div', { class: 'privacy-pill' }, [icon('verified_user'), el('span', {}, ['No uploads. No servers. 100% on-device.'])]),
+      el('div', { class: 'privacy-pill' }, [icon('lock'), el('span', { class: 'pill-text' }, ['No uploads. No servers. 100% on-device.'])]),
     ]),
     dropzone,
     jobsEl,
@@ -216,6 +217,31 @@ export function startApp(root: HTMLElement): void {
   }, ['History']);
   navLinks.set('history', historyLink);
 
+  // Mobile menu (collapsed <768px). Reuses the same nav-links + icon-buttons.
+  const mobileMenu = el('div', { class: 'mobile-menu hidden', role: 'menu' }, [
+    el('a', { class: 'mobile-link', href: '#', role: 'menuitem', onclick: (e) => { e.preventDefault(); showView('converter'); closeMobile(); } }, [icon('sync_alt'), 'Converter']),
+    el('a', { class: 'mobile-link', href: '#', role: 'menuitem', onclick: (e) => { e.preventDefault(); showView('converter'); closeMobile(); resultsWrap.scrollIntoView({ behavior: 'smooth' }); } }, [icon('history'), 'History']),
+    el('a', { class: 'mobile-link', href: '#', role: 'menuitem', onclick: (e) => { e.preventDefault(); showView('settings'); closeMobile(); } }, [icon('settings'), 'Settings']),
+    el('a', { class: 'mobile-link', href: '#', role: 'menuitem', onclick: (e) => { e.preventDefault(); showView('privacy'); closeMobile(); } }, [icon('security'), 'Privacy']),
+    el('a', { class: 'mobile-link', href: '#', role: 'menuitem', onclick: (e) => { e.preventDefault(); showView('help'); closeMobile(); } }, [icon('help_outline'), 'Help']),
+  ]);
+  const mobileBtn = el('button', { class: 'icon-btn mobile-btn', 'aria-label': 'Open menu', 'aria-expanded': 'false' }, [icon('menu')]);
+  function closeMobile(): void {
+    mobileMenu.classList.add('hidden');
+    mobileBtn.setAttribute('aria-expanded', 'false');
+  }
+  mobileBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.remove('hidden');
+      mobileBtn.setAttribute('aria-expanded', 'true');
+    } else {
+      closeMobile();
+    }
+  });
+  window.addEventListener('click', closeMobile);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+
   root.append(
     el('header', { class: 'topbar' }, [
       el('div', { class: 'topbar-inner' }, [
@@ -229,11 +255,13 @@ export function startApp(root: HTMLElement): void {
           navLink('settings', 'Settings'),
         ]),
         el('div', { class: 'top-actions' }, [
-          el('button', { class: 'icon-btn', title: 'Privacy', onclick: () => showView('privacy') }, [icon('security')]),
-          el('button', { class: 'icon-btn', title: 'Help', onclick: () => showView('help') }, [icon('help_outline')]),
+          el('button', { class: 'icon-btn', title: 'Privacy', 'aria-label': 'Privacy', onclick: () => showView('privacy') }, [icon('security')]),
+          el('button', { class: 'icon-btn', title: 'Help', 'aria-label': 'Help', onclick: () => showView('help') }, [icon('help_outline')]),
+          mobileBtn,
         ]),
       ]),
     ]),
+    mobileMenu,
     el('main', { class: 'main' }, [
       converterView,
       settingsView,
@@ -431,6 +459,10 @@ export function startApp(root: HTMLElement): void {
 
   function renderResults(): void {
     resultsListEl.textContent = '';
+    const exportableCount = results.filter((r) => r.status === 'ok').length;
+    dlAll.btn.disabled = exportableCount === 0;
+    (clearAllBtn as HTMLButtonElement).disabled = results.length === 0;
+    filterEl.style.display = results.length === 0 ? 'none' : '';
     if (!results.length) {
       const empty = el('div', { class: 'empty' }, [
         el('div', { class: 'empty-icon' }, [icon('upload_file')]),
@@ -617,6 +649,7 @@ export function startApp(root: HTMLElement): void {
   }
 
   // --- initial history load ---
+  renderResults();
   listResults()
     .then((list) => {
       results.push(...list);
@@ -847,9 +880,11 @@ function pasteFile(file: File): File {
 /**
  * "Download all" dropdown with the two batch export modes: ZIP archive and
  * combined Markdown. Opens on click, closes on outside click or Escape.
+ * Returns the root wrapper and the trigger button so callers can disable it
+ * (e.g. when there is nothing to export).
  */
-function downloadAllWrap(onZip: () => void, onCombined: () => void): HTMLElement {
-  const btn = el('button', { class: 'dlall-btn' }, [icon('archive'), 'Download all']);
+function downloadAllWrap(onZip: () => void, onCombined: () => void): { root: HTMLElement; btn: HTMLButtonElement } {
+  const btn = el('button', { class: 'dlall-btn', disabled: '' }, [icon('archive'), 'Download all']) as HTMLButtonElement;
   const zipItem = el('button', { onclick: () => onZip() }, [icon('folder_zip'), 'ZIP archive']);
   const mdItem = el('button', { onclick: () => onCombined() }, [icon('article'), 'Combined Markdown']);
   const menu = el('div', { class: 'dlall-menu hidden' }, [zipItem, mdItem]);
@@ -857,6 +892,7 @@ function downloadAllWrap(onZip: () => void, onCombined: () => void): HTMLElement
 
   const close = () => menu.classList.add('hidden');
   btn.addEventListener('click', (e) => {
+    if (btn.disabled) return;
     e.stopPropagation();
     menu.classList.toggle('hidden');
   });
@@ -864,7 +900,7 @@ function downloadAllWrap(onZip: () => void, onCombined: () => void): HTMLElement
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') close();
   });
-  return wrap;
+  return { root: wrap, btn };
 }
 
 function shortEngine(engine: string): string {

@@ -46,6 +46,11 @@ body { padding-bottom: 64px; }
   direction: ltr;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
+/* While the icon font hasn't loaded yet, hide the placeholder ligature text so users never see "verified_user" rendered as a word. */
+html:not(.icons-ready) .material-symbols-outlined {
+  font-size: 0 !important;
+  color: transparent;
+}
 
 /* --- top app bar --- */
 .topbar {
@@ -98,6 +103,10 @@ body { padding-bottom: 64px; }
 .icon-btn:hover { color: var(--primary); background: var(--surface-high); }
 @media (max-width: 768px) {
   .nav { display: none; }
+  .mobile-btn { display: flex; }
+}
+@media (min-width: 769px) {
+  .mobile-btn { display: none; }
 }
 
 /* --- main column --- */
@@ -174,7 +183,7 @@ body { padding-bottom: 64px; }
   margin-top: 8px;
 }
 .privacy-pill .material-symbols-outlined { font-size: 16px; color: var(--primary); }
-.privacy-pill span { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
+.privacy-pill .pill-text { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
 
 /* --- settings --- */
 .settings {
@@ -698,3 +707,63 @@ button.confirming {
   outline: 1px solid var(--primary);
   outline-offset: 2px;
 }
+
+/* --- mobile hamburger menu: hidden on desktop, shown below 768px --- */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 64px;
+  right: 12px;
+  z-index: 60;
+  min-width: 220px;
+  background: var(--surface-low);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  padding: 6px;
+}
+.mobile-menu:not(.hidden) { display: flex; }
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.mobile-link:hover { background: var(--surface-high); color: var(--primary); }
+.mobile-link .material-symbols-outlined { font-size: 20px; color: var(--muted); }
+.mobile-link:hover .material-symbols-outlined { color: var(--primary); }
+
+/* --- dropzone keyboard focus --- */
+.dropzone:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* --- active nav-link underline --- */
+.nav-link {
+  position: relative;
+}
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 1px;
+}
+
+/* --- disabled buttons (history empty state) --- */
+button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button[disabled]:hover { background: none; color: var(--primary); }
+.actions button[disabled]:hover { background: none; color: var(--primary); }
