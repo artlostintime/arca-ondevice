@@ -24,21 +24,17 @@ export function resampleTo16k(input: Float32Array, fromRate: number): Float32Arr
   return out;
 }
 
-export interface AudioChunk {
-  samples: Float32Array;
-}
-
 /** Split 16 kHz PCM into 30s chunks with 2s overlap. */
-export function chunkAudio(pcm: Float32Array): AudioChunk[] {
+export function chunkAudio(pcm: Float32Array): Float32Array[] {
   const chunkLen = CHUNK_SECONDS * SAMPLE_RATE;
   const overlap = OVERLAP_SECONDS * SAMPLE_RATE;
   const step = chunkLen - overlap;
-  if (pcm.length <= chunkLen) return [{ samples: pcm }];
-  const chunks: AudioChunk[] = [];
+  if (pcm.length <= chunkLen) return [pcm];
+  const chunks: Float32Array[] = [];
   let start = 0;
   while (start < pcm.length) {
     const end = Math.min(pcm.length, start + chunkLen);
-    chunks.push({ samples: pcm.slice(start, end) });
+    chunks.push(pcm.slice(start, end));
     if (end >= pcm.length) break;
     start += step;
   }

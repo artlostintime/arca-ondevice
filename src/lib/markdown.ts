@@ -22,9 +22,7 @@ export function detectTextDir(text: string): 'rtl' | 'ltr' {
     : 'ltr';
 }
 
-export function downloadText(filename: string, text: string, ext: 'md' | 'txt'): void {
-  const name = filename.endsWith('.md') || filename.endsWith('.txt')
-    ? filename
-    : `${filename}.${ext}`;
+export function downloadText(filename: string, text: string): void {
+  const name = filename.endsWith('.md') || filename.endsWith('.txt') ? filename : `${filename}.md`;
   downloadBlob(name, new Blob([text], { type: 'text/plain;charset=utf-8' }));
 }

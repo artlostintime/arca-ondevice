@@ -1,16 +1,4 @@
-import type { Category, FileTypeInfo } from './filetype';
-
-export interface Detected {
-  category: Category;
-  format: string;
-  confidence: number;
-  label: string;
-}
-
-export function toDetected(info: FileTypeInfo): Detected {
-  const { reason: _reason, ...rest } = info;
-  return rest;
-}
+import type { FileTypeInfo } from './filetype';
 
 export interface ConversionMetadata {
   engine: string;
@@ -23,7 +11,7 @@ export interface ConversionMetadata {
 export interface ConversionResult {
   id: string;
   fileName: string;
-  detected: Detected;
+  detected: FileTypeInfo;
   markdown: string;
   metadata: ConversionMetadata;
   warnings: string[];

@@ -145,17 +145,18 @@ export function startApp(root: HTMLElement): void {
     el('div', { class: 'prose' }, [
       el('h3', {}, ['How to convert']),
       el('ol', {}, [
-        el('li', {}, ['Drop a file (or click the drop zone) — PDF, DOCX, images, and audio are supported.']),
+        el('li', {}, ['Drop a file (or click the drop zone) — PDF, DOCX, PPTX, XLSX, ODT, RTF, images, and audio are supported.']),
         el('li', {}, ['Conversion runs fully on-device. The first time, the required model is downloaded once.']),
         el('li', {}, ['Copy the Markdown result, download it, or find it again in History.']),
       ]),
       el('h3', {}, ['Language & audio']),
-      el('p', {}, ['Set your preferred recognition language, audio model size, and compute device in the Settings tab. Larger models are slower but more accurate.']),
+      el('p', {}, ['Set the recognition language, speech model, and compute device in the Settings tab. The default Whisper Tiny model is multilingual (English, Hindi, Urdu and more); Moonshine is a faster English-only option. Larger models are slower but more accurate.']),
       el('h3', {}, ['Troubleshooting']),
       el('ul', {}, [
         el('li', {}, ['Model downloads can fail with a poor connection — retry the conversion and the download resumes.']),
-        el('li', {}, ['If speech recognition misses words, try the "Base" audio model or a clearer recording.']),
-        el('li', {}, ['If OCR text looks wrong, ensure the file is a clean scan in a supported language.']),
+        el('li', {}, ['If speech recognition misses words, try "Whisper Base" in Settings or a clearer recording.']),
+        el('li', {}, ['If OCR text looks wrong, ensure the file is a clean scan in a supported language — poor scans are retried automatically with a stronger OCR engine.']),
+        el('li', {}, ['Files larger than the size limit (default 512 MB) are rejected with an explanation — split them up first.']),
       ]),
     ]),
   ]);
@@ -165,16 +166,19 @@ export function startApp(root: HTMLElement): void {
     el('div', { class: 'prose' }, [
       el('h3', {}, ['Supported formats']),
       el('ul', {}, [
-        el('li', {}, ['Documents: PDF, DOCX']),
-        el('li', {}, ['Images: PNG, JPEG, TIFF, BMP']),
-        el('li', {}, ['Audio: WAV, MP3, FLAC, OGG']),
+        el('li', {}, ['Documents: PDF (incl. scanned), DOCX, PPTX, XLSX, ODT, ODS, ODP, RTF, EPUB, CSV']),
+        el('li', {}, ['Images: PNG, JPEG, WebP, TIFF, BMP, GIF, HEIC']),
+        el('li', {}, ['Audio: WAV, MP3, FLAC, OGG, M4A, AIFF']),
         el('li', {}, ['Plain text: TXT, Markdown, CSV']),
       ]),
       el('h3', {}, ['Engines']),
       el('ul', {}, [
-        el('li', {}, ['OCR: PP-OCRv3 detection + PP-OCRv5 recognition (ONNX Runtime Web), Tesseract.js fallback.']),
-        el('li', {}, ['Speech-to-text: Whisper / Moonshine via transformers.js (ONNX).']),
+        el('li', {}, ['Documents: anydoc (office formats) and pdf-inspector (PDF classification, text and per-page OCR routing).']),
+        el('li', {}, ['OCR: PP-OCRv3 detection + PP-OCRv5/v3 recognition (ONNX Runtime Web). If the result is empty or low-confidence, Tesseract.js retries automatically.']),
+        el('li', {}, ['Speech-to-text: Whisper Tiny (multilingual, default) / Whisper Base / Moonshine Tiny/Base (English-only, faster) via transformers.js (ONNX).']),
       ]),
+      el('h3', {}, ['Accuracy']),
+      el('p', {}, ['Small models run first; if a quality check fails, a stronger path takes over: Tesseract for low-confidence OCR, and Whisper Base for difficult audio. Scanned or mixed PDFs get per-page OCR merged back in page order. Long audio is chunked with overlap and never silently truncated.']),
       el('h3', {}, ['On-device & offline']),
       el('p', {}, ['All processing happens in Web Workers — the main thread stays responsive and nothing leaves the browser. After the first download, conversion works offline.']),
       el('h3', {}, ['Model storage']),
@@ -465,7 +469,7 @@ export function startApp(root: HTMLElement): void {
         el('button', { onclick: () => copyText(r.markdown, 'Copied markdown.') }, [icon('content_copy'), 'Copy']),
         el('button', { title: 'Copy raw text', onclick: () => copyText(rawText(r.markdown), 'Copied raw text.') }, [icon('text_snippet'), 'Raw']),
         el('button', { title: 'Copy filename', onclick: () => copyText(r.fileName, 'Copied filename.') }, [icon('drive_file_rename_outline'), 'Name']),
-        el('button', { onclick: () => downloadText(r.fileName, r.markdown, 'md') }, [icon('download'), 'Download']),
+        el('button', { onclick: () => downloadText(r.fileName, r.markdown) }, [icon('download'), 'Download']),
       );
       if (editing) {
         actions.push(
@@ -608,7 +612,7 @@ export function startApp(root: HTMLElement): void {
       toast('No conversions to export.', 'err');
       return;
     }
-    downloadText(`arca-conversions-${stamp()}`, md, 'md');
+    downloadText(`arca-conversions-${stamp()}`, md);
     toast('Exported combined Markdown.', 'ok');
   }
 

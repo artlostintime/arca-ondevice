@@ -48,8 +48,8 @@ describe('chunkAudio', () => {
     const pcm = new Float32Array(90 * SAMPLE_RATE); // 90s → 30s chunks, 2s overlap
     const chunks = chunkAudio(pcm);
     expect(chunks.length).toBe(4);
-    expect(chunks[0].samples.length).toBe(30 * SAMPLE_RATE);
-    expect(chunks[1].samples.length).toBe(30 * SAMPLE_RATE);
+    expect(chunks[0].length).toBe(30 * SAMPLE_RATE);
+    expect(chunks[1].length).toBe(30 * SAMPLE_RATE);
   });
 });
 

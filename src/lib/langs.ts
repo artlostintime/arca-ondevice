@@ -1,6 +1,6 @@
 export type LangKey = 'auto' | 'en' | 'hi' | 'ur';
 
-export interface LangDef {
+type LangDef = {
   key: LangKey;
   label: string;
   native: string;
@@ -8,7 +8,7 @@ export interface LangDef {
   whisperCode?: string;
   /** OCR recognition dict key used by the OCR worker. */
   ocrKey: 'en' | 'hi' | 'ur';
-}
+};
 
 export const LANGS: LangDef[] = [
   { key: 'auto', label: 'Auto (English)', native: 'EN', ocrKey: 'en' },
