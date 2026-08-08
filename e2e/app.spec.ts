@@ -27,6 +27,14 @@ test('app loads and shows the drop zone', async ({ page }) => {
   await expect(page.locator('.empty')).toContainText('No conversions yet');
 });
 
+test('clicking the brand returns to the converter home', async ({ page }) => {
+  await page.goto('/');
+  await page.click('a.nav-link:has-text("Settings")');
+  await expect(page.locator('.view.active')).toContainText('Settings');
+  await page.click('.brand');
+  await expect(page.locator('.view.active')).toContainText('Drop files here or click to browse');
+});
+
 test('converts a plain text file into a markdown card', async ({ page }) => {
   await page.goto('/');
   await convertFile(page, {

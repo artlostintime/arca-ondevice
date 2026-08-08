@@ -245,7 +245,7 @@ export function startApp(root: HTMLElement): void {
   root.append(
     el('header', { class: 'topbar' }, [
       el('div', { class: 'topbar-inner' }, [
-        el('div', { class: 'brand' }, [
+        el('a', { class: 'brand', href: '#', 'aria-label': 'Arca home', onclick: (e) => { e.preventDefault(); showView('converter'); window.scrollTo({ top: 0 }); } }, [
           icon('sync_alt'),
           el('span', { class: 'brand-name' }, ['Arca']),
         ]),

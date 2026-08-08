@@ -69,7 +69,8 @@ html:not(.icons-ready) .material-symbols-outlined {
   justify-content: space-between;
   gap: 16px;
 }
-.brand { display: flex; align-items: center; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; border-radius: 6px; }
+.brand:hover { background: var(--surface-high); }
 .brand .material-symbols-outlined { font-size: 28px; color: var(--primary); }
 .brand-name {
   font-family: var(--font-head);
